@@ -1,4 +1,7 @@
 import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 import st.EntryMap;
@@ -33,6 +36,28 @@ public class TemplateEngineTest {
         assertEquals("Hello Adam, is your age 29", result);
     }
     
+    @Test
+    public void EntryMapSpec4Test1(){ 
+    	map.store("name", "Ritvik", true);
+    	map.store("name", "Einar", false);
+    	String result1 = engine.evaluate("First name is ${NAME}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("Second name is ${name}", map, "keep-unmatched");
+    	assertEquals("First name is Einar",result1);
+    	assertEquals("Second name is Ritvik", result2);
+    }
     
-
+    @Test
+    public void EntryMapSpec4Test2(){// ASK ABOUT SPEC 4
+    	
+    }
+    
+    @Test
+    public void EntryMapSpec4Test3(){
+    	assertEquals("sda","sdss");
+    }
+    
+    @Test
+    public void EntryMapSpec5Test1(){
+    	
+    }
 }
