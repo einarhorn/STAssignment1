@@ -73,7 +73,13 @@ public class TemplateEngineTest {
     }
     
     // EntryMap - Spec 2 - Replace value is valid
-    // No need to test this, this is identical to Spec 1 w/ valid template
+    @Test
+    public void EntryMapSpec2_Valid(){
+    	map.store(VALID_ARG_1, VALID_ARG_2, false);
+    	String result = engine.evaluate("Hello ${name}", map,"delete-unmatched");
+    	assertEquals("Hello Adam", result);
+    }
+    
 
    
     
