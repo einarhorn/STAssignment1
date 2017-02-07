@@ -1,0 +1,186 @@
+The template engine is a java class that transforms template strings into "instanced" strings.
+            ---> For example, in the template string "Hello ${name} ${surname}" there are two templates:
+                1 - ${name}
+                2 - ${surname}
+
+In order to do that a template/value map must be provided.
+            --->For example, if the template/value map contains two entries (name="Adam" and surname="Dykes")
+                and the template string is "Hello ${name} ${surname}" the result would be: "Hello Adam Dykes".
+
+Below there is the same example but in actual java code (all arguments will be specified):
+
+    EntryMap map = new EntryMap();
+    TemplateEngine engine = new TemplateEngine();
+
+    map.store("name", "Adam", false);
+    map.store("surname", "Dykes", false);
+
+    String result = engine.evaluate("Hello ${name} ${surname}", map,"delete-unmatched");
+    // The variable result contains the instanced string "Hello Adam Dykes".
+
+
+The EntryMap class acts as a template/value map and the TemplateEngine class is the template engine which creates the "instanced" string.
+
+Both classes are NOT static and are NOT thread-safe.
+
+############################
+EntryMap Class Specification
+############################
+
+Overview:
+
+---EntryMap is a java class responsible for tracking the values of the templates to be replaced in template strings.
+
+---This class exposes only ONE non-static method (store) for inserting a template/value pair.
+
+---In this specification file, a template/value pair is called an "entry".
+
+EntryMap.store Arguments:
+
+    arg1 (Type: String) - Template: The template to be searched in the template string.
+    arg2 (Type: String) - Replace value: The value to replace the template.
+    arg3 (Type: Boolean) - Case sensitive flag: A boolean flag indicating if the template matching should be case sensitive.
+
+
+EntryMap.store Return Type:
+
+    Type: Void - This method does not return anything.
+
+
+EntryMap.store Specifications:
+
+    spec1 - Template cannot be NULL or empty. A runtime exception is thrown otherwise.
+    spec2 - Replace value string cannot be NULL. A runtime exception is thrown otherwise.
+    spec3 - Case sensitive flag is optional and can be NULL. In the case of NULL case sensitive flag, template matching will be case insensitive.
+    spec4 - The entries are ordered and follow the order in which they appear in the program.
+            ---> In the previous example the "name"/"Adam" entry is the first entry since it was stored first.
+    spec5 - Entries that already exist cannot be stored again.
+            ---> In the following commands only the first entry will be saved:
+                    map.store("name", "Adam", false);
+                    map.store("name", "Adam", false);
+            ---> In the following commands, however, both entries will be saved:
+                    map.store("name", "Adam", false);
+                    map.store("name", "Adam", true);
+
+
+
+##################################
+TemplateEngine Class Specification
+##################################
+
+Overview:
+
+---TemplateEngine is a java class which, given a template string and an EntryMap object, is able to produce the "instanced" string.
+
+---This class exposes only ONE non-static method (evaluate) which transforms the template string into an "instanced" string.
+
+TemplateEngine.evaluate Arguments:
+
+    arg1 (Type: String) - Template string: The template string to be instantiated.
+    arg2 (Type: EntryMap) - EntryMap object: An EntryMap object containing the ordered entries.
+    arg3 (Type: String) - Matching mode: This parameter affects how the engine deals with templates that are not matched with any entry in the EntryMap.
+        --->The possible values for this argument are "keep-unmatched" and "delete-unmatched".
+
+
+TemplateEngine.evaluate Return Type:
+
+    Type: String - This method returns the "instanced" string.
+
+
+TemplateEngine.evaluate Specifications:
+
+    spec1 - The template string can be NULL or empty. If template string NULL or empty, then the unchanged template string is returned.
+    spec2 - The EntryMap object can be NULL. If EntryMap object NULL, then the unchanged template string is returned.
+    spec3 - Matching mode cannot be NULL and must be one of the possible values ("keep-unmatched" and "delete-unmatched"). If matching mode NULL or other value, it defaults to "delete-unmatched".
+    spec4 - Templates in a template string occur between "${" and "}". In a template, everything between its boundaries ("${" and "}") is treated as normal text when matched against an entry.
+            ---> In the template string "Hello ${name}, could you please give me your ${item} ?" the two templates are:
+                1 - ${name}
+                2 - ${item}
+            ---> The text of each template that will be matched against the EntryMap stored entries are:
+                1 - "name"
+                2 - "item"
+                (i.e. the template boundaries are omitted)
+    spec5 - When a template is matched against an entry key, any non visible character does not affect the result.
+            ---> The entry "middle name"/"Peter" will match all of the following templates:
+                1 - ${middle name}
+                2 - ${middlename}
+                3 - ${middle       name}
+    spec6 - In a template string every "${" and "}" occurrence acts as a boundary of at MOST one template.
+            ---> Processing from left-to-right, each "}" occurrence that is not already a boundary to a template is matched to its closest preceding "${" occurrence which also is not already a boundary to a template.
+            ---> In the template string "I heard that }: ${name} said: ${we should try or best for winning the ${competition} cup.}" the templates are:
+                1 - ${name}
+                2 - ${competition}
+                3 - ${we should try or best for winning the ${competition} cup.}
+    spec7 - In a template string the different templates are ordered according to their length. The shorter templates precede.
+            ---> In the case of same-length templates, the one that occurs first when traversing the template string from left-to-right precedes.
+            ---> In the template string "abc}${de}${fgijk${lm}nopqr}${s}uvw${xyz" the sorted templates are:
+                1 - ${s}
+                2 - ${de}
+                3 - ${lm}
+                4 - ${fgijk${lm}nopqr}
+    spec8 - The engine processes one template at a time and attempts to match it against the keys of the EntryMap entries until there is a match or the entry list is exhausted.
+            ---> The engine processes both templates and entries according to their order.
+            ---> If there is a match:
+                    1 - The template (including its boundaries) in the template string is replaced by the value of the matched entry.
+                    2 - The same replace happens to all other templates which include the replaced template.
+                    3 - The template engine moves on to the next template and repeats.
+            ---> If the entry list is exhausted and no match found for the current template:
+                    1 - The template engine just moves on to the next template if matching the mode is "keep-unmatched".
+                    2 - The engine deletes the unmatched template from the template string and all other templates which include it.
+
+
+Consider the following java example:
+
+    EntryMap map = new EntryMap();
+    TemplateEngine engine = new TemplateEngine();
+
+    map.store("name", "Adam", false);
+    map.store("surname", "Dykes", false);
+    map.store("age", "29", false);
+
+
+    String result = engine.evaluate("Hello ${name}, is your age ${age ${symbol}}", map,"delete-unmatched");
+
+
+    In this example the ordered entries are:
+
+        1 - "name"/"Adam"
+        2 - "surname"/"Dykes"
+        3 - "age"/"29"
+
+    The ordered templates are:
+
+        1 - ${name}
+        2 - ${symbol}
+        3 - ${age ${symbol}}
+
+
+    The matching process is described step by step bellow:
+
+        step1 - template1 (${name}) is matched against entry1 ("name"/"Adam") ===> match!
+            ---> Instanced string is now: "Hello Adam, is your age ${age ${symbol}}"
+
+        step2 - template2 (${symbol}) is matched against entry1 ("name"/"Adam") ===> no match!
+            ---> Moving on to the next entry.
+
+        step3 - template2 (${symbol}) is matched against entry2 ("surname"/"Dykes") ===> no match!
+            ---> Moving on to the next entry.
+
+        step4 - template2 (${symbol}) is matched against entry3 ("age"/"29") ===> no match!
+            ---> Entry list exhausted and no match was found for template2.
+
+        step5 - matching mode is "delete-unmatched" so template2 is deleted from the instanced string and all other templates containing it.
+            ---> Instanced string is now: "Hello Adam, is your age ${age }"
+            ---> template3 is now: ${age }
+
+        step6 - template3 (${age }) is matched against entry1 ("name"/"Adam") ===> no match!
+            ---> Moving on to the next entry.
+
+        step7 - template3 (${age }) is matched against entry2 ("surname"/"Dykes") ===> no match!
+            ---> Moving on to the next entry.
+
+        step8 - template3 (${age }) is matched against entry3 ("age"/"29") ===> match!
+            ---> Instanced string is now: "Hello Adam, is your age 29"
+
+        step9 - no more templates to process, algorithm terminates.
+            ---> Returned instanced string: "Hello Adam, is your age 29"
