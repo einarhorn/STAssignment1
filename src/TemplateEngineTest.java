@@ -143,22 +143,20 @@ public class TemplateEngineTest {
     
     @Test
     public void EntryMapSpec4Test1(){ 
-    	map.store("name", "Ritvik", true);
-    	map.store("name", "Einar", false);
-    	String result1 = engine.evaluate("First name is ${NAME}", map, "keep-unmatched");
-    	String result2 = engine.evaluate("Second name is ${name}", map, "keep-unmatched");
-    	assertEquals("First name is Einar",result1);
-    	assertEquals("Second name is Ritvik", result2);
+    	map.store("name", "Einar", true);
+    	map.store("name", "Ritvik", false);
+    	String result1 = engine.evaluate("Second name is ${NAME}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
+    	assertEquals("Second name is Ritvik",result1);
+    	assertEquals("First name is Einar", result2);
     }
     
     @Test
-    public void EntryMapSpec4Test2(){// ASK ABOUT SPEC 4
-    	
-    }
-    
-    @Test
-    public void EntryMapSpec4Test3(){
-    	assertEquals("sda","sdss");
+    public void EntryMapSpec4Test2(){
+    	map.store("name", "Romeo", false);
+    	map.store("name", "Juliet", false);
+    	String result1 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
+    	assertEquals("First name is Romeo",result1);
     }
     
     @Test
