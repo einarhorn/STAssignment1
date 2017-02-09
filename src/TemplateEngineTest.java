@@ -288,7 +288,7 @@ public class TemplateEngineTest {
     	map.store("name", "trump", false);
     	String result1 = engine.evaluate("${name} Duck is so funny!",map,"keep-unmatched");
     	String resutl2 = engine.evaluate("I still have a ${name} card up my sleeve!", map, "keep-unmatched");
-    	assertEquals("Donald Duck is so funny",result1);
+    	assertEquals("Donald Duck is so funny!",result1);
     	assertEquals("I still have a trump card up my sleeve!",resutl2);
     }
     
@@ -343,4 +343,37 @@ public class TemplateEngineTest {
     	assertEquals("first name is Chan", result);	
     }
     
+    @Test
+    public void TemplateEngineSpec6Test1MoreOpenBraces(){
+    	map.store("date", "24th", false);
+    	map.store("month", "January", false);
+    	String result = engine.evaluate("Today's ${date is ${date} of ${month}", map, "keep-unmatched");
+    	assertEquals("Today's ${date is 24th of January",result);
+    }
+    
+    @Test
+    public void TemplateEngineSpec6Test2MoreClosedBraces(){
+    	map.store("date", "24th", false);
+    	map.store("month", "January", false);
+    	String result = engine.evaluate("Today's date is ${date} of ${month} }", map, "keep-unmatched");
+    	assertEquals("Today's date is 24th of January }",result);
+    }
+
+    @Test
+    public void TemplateEngineSpec6Test3ReverseOrder(){
+    	map.store("date", "24th", false);
+    	map.store("month", "January", false);
+    	String result = engine.evaluate("Today's date }is ${date} of ${month} ${", map, "keep-unmatched");
+    	assertEquals("Today's date }is 24th of January ${",result);
+    }
+    
+    @Test
+    public void TemplateEngineSpec6Test4ComplexString(){
+    	map.store("date", "10th", false);
+    	map.store("month", "January", false);
+    	map.store("10th of January", "Febuary",false);
+    	String result = engine.evaluate("${ This is due ${date } of ${ ${date} of ${month} } }", map, "keep-unmatched");
+    	assertEquals("${ This is due 10th of Febuary }",result);
+    
+    }
 }
