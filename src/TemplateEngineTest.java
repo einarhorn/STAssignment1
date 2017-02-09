@@ -241,7 +241,81 @@ public class TemplateEngineTest {
     }
     
     
+    // Spec 4 - Valid templates composed of sub templates
+    // Note the "keep-unmatched" setting used here
+    @Test
+    public void TemplateEngineSpec4_NestedTemplateStrings(){
+    	map.store("name ${names}", "James", false);
+    	map.store("car ${cars}", "bmw", false);
+    	map.store("age ${ages}", "old", false);
+    	
+    	String result = engine.evaluate("That's ${name ${names}}, he's ${age ${ages}} and drives an ugly ${car ${cars}}", map, "keep-unmatched");
+    	assertEquals("That's James, he's old and drives an ugly bmw", result);
+    }
+    
+    
+    
+    // TemplateEngine - Spec 7 - Templates are ordered according the their length
+    
+    // Spec 7 - Testing the ordering by length
+    // Note the "keep-unmatched" setting used here
+    @Test
+    public void TemplateEngineSpec7_LengthTest(){
+    	map.store("schoolies ${a}", "this should never appear", false);
+    	map.store("carcar ${bb}", "neither should this", false);
+    	map.store("ccc ${ages}", "nor this", false);
+    	map.store("a", "zazzle", false);
+    	map.store("bb", "whammy", false);
+    	map.store("ccc", "vrooom", false);
+    	map.store("schoolies zazzle", "boom", false);
+    	map.store("ages", "moot moot", false);
+    	
+    	String result = engine.evaluate("That's ${schoolies ${a}}, it's ${carcar ${bb}} and drives an ugly ${ccc ${ages}}", map, "keep-unmatched");
+    	
+    	/**
+    	 *  Order should be:
+    	 *  1.) ${a}
+    	 *  2.) ${bb}
+    	 *  3.) ${ccc}
+    	 *  4.) ${ages}
+    	 *  5.) ${carcar}
+    	 *  6.) ${schoolies}
+    	 *  7.) ${ccc ${ages}}
+    	 *  8.) ${carcar ${bb}}
+    	 *  9.) ${schoolies ${a}}
+    	 *  
+    	 *  
+    	 *  
+    	 *  Map contains:
+    	 *  1.) ($schoolies $a}, blurghh)
+    	 *  2.) (carcar ${bb}, rawrr)
+    	 *  3.) (ccc ${ages}, doot doot)
+    	 *  2.) (a, zazzle)
+    	 *  2.) (bb, whammy)
+    	 *  3.) (ccc, vrooom)
+    	 *  4.) (schoolies zazzle, boom)
+    	 */
+    	
+    	assertEquals("That's boom, it's ${carcar whammy} and drives an ugly ${ccc moot moot}", result);
+    }
+    
+    // Spec 7 - Testing the ordering when template lengths are equal. Equal length templates should be ordered left-right.
 
+    @Test
+    public void TemplateEngineSpec7_EqualLengthTest(){
+    	
+    	map.store("name", "Einar", true);
+    	map.store("name", "Ritvik", false);
+    	String result1 = engine.evaluate("Second ${name} is ${NAME}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("Second ${NAME} is ${name}", map, "keep-unmatched");
+    	
+
+    	assertEquals("Second Einar is Ritvik", result1);
+    	assertEquals("Second Ritvik is Einar", result2);
+    }
+    
+    
+    
     @Test
     public void EntryMapSpec4Test1(){ 
     	map.store("name", "Einar", true);
