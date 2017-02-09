@@ -119,27 +119,6 @@ public class TemplateEngineTest {
     	assertEquals("Hello Adam", result);
     	
     }
-
-    
-    
-    
-    
-    
-    @Test
-    public void Test1() {
-        map.store("name ${x} z", "Adam", false);
-        String result = engine.evaluate("Hello ${name ${x} z}", map,"delete-unmatched");
-        assertEquals("Hello Adam", result);
-    }
-
-    @Test
-    public void Test2() {
-        map.store("name", "Adam", false);
-        map.store("surname", "Dykes", false);
-        map.store("age", "29", false);
-        String result = engine.evaluate("Hello ${name}, is your age ${age ${symbol}}", map,"delete-unmatched");
-        assertEquals("Hello Adam, is your age 29", result);
-    }
     
     @Test
     public void EntryMapSpec4Test1(){ 
@@ -160,7 +139,44 @@ public class TemplateEngineTest {
     }
     
     @Test
-    public void EntryMapSpec5Test1(){
-    	
+    public void EntryMapSpec5Test1(){ // THIS ONE DOESNT PASSES BUT THAT IS DUE TO ANOTHER ERROR IN THE SPEC OF TEMPLATE ENGINE
+
+    	map.store("name", "adam", false);
+    	map.store("name", "adam", false);
+    	String result1 = engine.evaluate("The only name is ${name}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("There should be no other ${name}",map, "keep-unmatched");
+    	assertEquals("The only name is adam",result1);
+    	assertEquals("There should be no other ${name}",result2);
     }
+    
+    @Test
+    public void EntryMapSpec5Test2() {
+    	map.store("name", "bernie", true);
+    	map.store("name", "bernie", false);
+    	String result1 = engine.evaluate("FEEL THE BERN!, ${NAME}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("feel the bern, ${name}",map, "keep-unmatched");
+    	assertEquals("FEEL THE BERN!, bernie",result1);
+    	assertEquals("feel the bern, bernie",result2);
+    }
+    
+    @Test
+    public void EntryMapSpec5Test3() // THIS ONE DOESNT PASSES BUT THAT IS DUE TO ANOTHER ERROR IN THE SPEC OF TEMPLATE ENGINE
+    {
+    	map.store("name", "Donald", false);
+    	map.store("name", "trump", false);
+    	String result1 = engine.evaluate("${name} Duck is so funny!",map,"keep-unmatched");
+    	String resutl2 = engine.evaluate("I still have a ${name} card up my sleeve!", map, "keep-unmatched");
+    	assertEquals("Donald Duck is so funny",result1);
+    	assertEquals("I still have a trump card up my sleeve!",resutl2);
+    }
+    
+    @Test
+    public void EntryMapSpec5Test4() 
+    {
+    	map.store("firstName", "Hilary", false);
+    	map.store("firstname", "Hilary", false);
+    	int size = map.getEntries().size();
+    	assertEquals(2,size);
+    }
+    
 }
