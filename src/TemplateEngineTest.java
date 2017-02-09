@@ -301,4 +301,46 @@ public class TemplateEngineTest {
     	assertEquals(2,size);
     }
     
+    @Test
+    public void TemplateEngineSpec5Test1()    {
+    	map.store("first name", "Jackie", false);
+    	String result = engine.evaluate("first name is ${firstname}",map, "keep-unmatched");
+    	assertEquals("first name is Jackie", result);
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test2() {
+    	map.store("first"+'\t'+"name", "Jackie", false);
+    	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
+    	assertEquals("first name is Jackie", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test3(){
+    	map.store("first"+'\n'+"name", "Jackie", false);
+    	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
+    	assertEquals("first name is Jackie", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test4()    {
+    	map.store("First Name", "Chan", true);
+    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
+    	assertEquals("first name is Chan", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test5() {
+    	map.store("First"+'\t'+"Name", "Chan", true);
+    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
+    	assertEquals("first name is Chan", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test6(){
+    	map.store("First"+'\n'+"Name", "Chan", true);
+    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
+    	assertEquals("first name is Chan", result);	
+    }
+    
 }
