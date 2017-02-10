@@ -110,7 +110,7 @@ TemplateEngine.evaluate Specifications:
             ---> In the template string "I heard that }: ${name} said: ${we should try or best for winning the ${competition} cup.}" the templates are:
                 1 - ${name}
                 2 - ${competition}
-                3 - ${we should try or best for winning the ${competition} cup.}
+                3 - ${we should try our best for winning the ${competition} cup.}
     spec7 - In a template string the different templates are ordered according to their length. The shorter templates precede.
             ---> In the case of same-length templates, the one that occurs first when traversing the template string from left-to-right precedes.
             ---> In the template string "abc}${de}${fgijk${lm}nopqr}${s}uvw${xyz" the sorted templates are:
