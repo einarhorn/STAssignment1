@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import st.EntryMap;
 import st.TemplateEngine;
 
-public class TemplateEngineTest {
+public class Task1 {
 
     private EntryMap map;
 
