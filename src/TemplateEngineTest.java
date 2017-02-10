@@ -27,7 +27,9 @@ public class TemplateEngineTest {
     final String VALID_ARG_2 = "Adam";
     
     
-    
+    /**
+     *  EntryMap Tests
+     */
     
     // EntryMap Spec 1 - Template cannot be null or empty. Valid template should pass.
     
@@ -63,8 +65,6 @@ public class TemplateEngineTest {
     
     
     
-    
-    
     // EntryMap Spec 2 - Replace value cannot be null. Empty or valid should pass.
     
     // EntryMap - Spec 2 - Replace value is null
@@ -91,9 +91,6 @@ public class TemplateEngineTest {
     }
     
 
-   
-    
-    
     
     
     // EntryMap Spec 3 - Case sensitive flag is optional and can be null
@@ -128,7 +125,77 @@ public class TemplateEngineTest {
     }
 
     
-    // TemplateEngine Specifications
+    @Test
+    public void EntryMapSpec4Test1(){ 
+    	map.store("name", "Einar", true);
+    	map.store("name", "Ritvik", false);
+    	String result1 = engine.evaluate("Second name is ${NAME}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
+    	assertEquals("Second name is Ritvik",result1);
+    	assertEquals("First name is Einar", result2);
+    }
+    
+    @Test
+    public void EntryMapSpec4Test2(){
+    	map.store("name", "Romeo", false);
+    	map.store("name", "Juliet", false);
+    	String result1 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
+    	assertEquals("First name is Romeo",result1);
+    }
+    
+    
+    
+    // Spec 5
+    
+    @Test
+    public void EntryMapSpec5Test1(){ // THIS ONE DOESNT PASSES BUT THAT IS DUE TO ANOTHER ERROR IN THE SPEC OF TEMPLATE ENGINE
+
+    	map.store("name", "adam", false);
+    	map.store("name", "adam", false);
+    	String result1 = engine.evaluate("The only name is ${name}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("There should be no other ${name}",map, "keep-unmatched");
+    	assertEquals("The only name is adam",result1);
+    	assertEquals("There should be no other ${name}",result2);
+    }
+    
+    @Test
+    public void EntryMapSpec5Test2() {
+    	map.store("name", "bernie", true);
+    	map.store("name", "bernie", false);
+    	String result1 = engine.evaluate("FEEL THE BERN!, ${NAME}", map, "keep-unmatched");
+    	String result2 = engine.evaluate("feel the bern, ${name}",map, "keep-unmatched");
+    	assertEquals("FEEL THE BERN!, bernie",result1);
+    	assertEquals("feel the bern, bernie",result2);
+    }
+    
+    @Test
+    public void EntryMapSpec5Test3() // THIS ONE DOESNT PASSES BUT THAT IS DUE TO ANOTHER ERROR IN THE SPEC OF TEMPLATE ENGINE
+    {
+    	map.store("name", "Donald", false);
+    	map.store("name", "trump", false);
+    	String result1 = engine.evaluate("${name} Duck is so funny!",map,"keep-unmatched");
+    	String resutl2 = engine.evaluate("I still have a ${name} card up my sleeve!", map, "keep-unmatched");
+    	assertEquals("Donald Duck is so funny!",result1);
+    	assertEquals("I still have a trump card up my sleeve!",resutl2);
+    }
+    
+    @Test
+    public void EntryMapSpec5Test4() 
+    {
+    	map.store("firstName", "Hilary", false);
+    	map.store("firstname", "Hilary", false);
+    	int size = map.getEntries().size();
+    	assertEquals(2,size);
+    }
+    
+    
+    
+    
+    /**
+     * 
+     * TemplateEngine Specifications
+     * 
+     */
     
     // TemplateEngine - Spec 1 - Template can be null or empty. If null or empty, evaluate returns unchanged template string.
     
@@ -160,6 +227,8 @@ public class TemplateEngineTest {
     
 
     
+    
+    
     // TemplateEngine - Spec 2 - EntryMap can be null. If EntryMap is null, unchanged template string can be returned
     // TemplateEngine - Spec 2 - EntryMap is null
     @Test
@@ -177,6 +246,8 @@ public class TemplateEngineTest {
     	String result = engine.evaluate("Hello ${name}", map, "delete-unmatched");
     	assertEquals("Hello Adam", result);
     }
+    
+    
     
     
     
@@ -216,6 +287,8 @@ public class TemplateEngineTest {
     }
     
     
+    
+    
     // TemplateEngine - Spec 4 - Everything between "${" and "}" are counted as templates
     
     // Spec 4 - Simple valid templates
@@ -253,6 +326,89 @@ public class TemplateEngineTest {
     	assertEquals("That's James, he's old and drives an ugly bmw", result);
     }
     
+    
+    
+    // Spec 5
+    
+    @Test
+    public void TemplateEngineSpec5Test1()    {
+    	map.store("first name", "Jackie", false);
+    	String result = engine.evaluate("first name is ${firstname}",map, "keep-unmatched");
+    	assertEquals("first name is Jackie", result);
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test2() {
+    	map.store("first"+'\t'+"name", "Jackie", false);
+    	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
+    	assertEquals("first name is Jackie", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test3(){
+    	map.store("first"+'\n'+"name", "Jackie", false);
+    	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
+    	assertEquals("first name is Jackie", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test4()    {
+    	map.store("First Name", "Chan", true);
+    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
+    	assertEquals("first name is Chan", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test5() {
+    	map.store("First"+'\t'+"Name", "Chan", true);
+    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
+    	assertEquals("first name is Chan", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec5Test6(){
+    	map.store("First"+'\n'+"Name", "Chan", true);
+    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
+    	assertEquals("first name is Chan", result);	
+    }
+    
+    
+    // Spec 6
+    
+    
+    @Test
+    public void TemplateEngineSpec6Test1MoreOpenBraces(){
+    	map.store("date", "24th", false);
+    	map.store("month", "January", false);
+    	String result = engine.evaluate("Today's ${date is ${date} of ${month}", map, "keep-unmatched");
+    	assertEquals("Today's ${date is 24th of January",result);
+    }
+    
+    @Test
+    public void TemplateEngineSpec6Test2MoreClosedBraces(){
+    	map.store("date", "24th", false);
+    	map.store("month", "January", false);
+    	String result = engine.evaluate("Today's date is ${date} of ${month} }", map, "keep-unmatched");
+    	assertEquals("Today's date is 24th of January }",result);
+    }
+
+    @Test
+    public void TemplateEngineSpec6Test3ReverseOrder(){
+    	map.store("date", "24th", false);
+    	map.store("month", "January", false);
+    	String result = engine.evaluate("Today's date }is ${date} of ${month} ${", map, "keep-unmatched");
+    	assertEquals("Today's date }is 24th of January ${",result);
+    }
+    
+    @Test
+    public void TemplateEngineSpec6Test4ComplexString(){
+    	map.store("date", "10th", false);
+    	map.store("month", "January", false);
+    	map.store("10th of January", "Febuary",false);
+    	map.store("${ This is due 10th of Febuary }", "It Works", false);
+    	String result = engine.evaluate("${${ This is due ${date} of ${ ${date} of ${month} } }}}", map, "keep-unmatched");
+    	assertEquals("It Works}",result);
+    }
     
     
     // TemplateEngine - Spec 7 - Templates are ordered according the their length
@@ -315,141 +471,7 @@ public class TemplateEngineTest {
     }
     
     
-    
-    @Test
-    public void EntryMapSpec4Test1(){ 
-    	map.store("name", "Einar", true);
-    	map.store("name", "Ritvik", false);
-    	String result1 = engine.evaluate("Second name is ${NAME}", map, "keep-unmatched");
-    	String result2 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
-    	assertEquals("Second name is Ritvik",result1);
-    	assertEquals("First name is Einar", result2);
-    }
-    
-    @Test
-    public void EntryMapSpec4Test2(){
-    	map.store("name", "Romeo", false);
-    	map.store("name", "Juliet", false);
-    	String result1 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
-    	assertEquals("First name is Romeo",result1);
-    }
-    
-    @Test
-    public void EntryMapSpec5Test1(){ // THIS ONE DOESNT PASSES BUT THAT IS DUE TO ANOTHER ERROR IN THE SPEC OF TEMPLATE ENGINE
-
-    	map.store("name", "adam", false);
-    	map.store("name", "adam", false);
-    	String result1 = engine.evaluate("The only name is ${name}", map, "keep-unmatched");
-    	String result2 = engine.evaluate("There should be no other ${name}",map, "keep-unmatched");
-    	assertEquals("The only name is adam",result1);
-    	assertEquals("There should be no other ${name}",result2);
-    }
-    
-    @Test
-    public void EntryMapSpec5Test2() {
-    	map.store("name", "bernie", true);
-    	map.store("name", "bernie", false);
-    	String result1 = engine.evaluate("FEEL THE BERN!, ${NAME}", map, "keep-unmatched");
-    	String result2 = engine.evaluate("feel the bern, ${name}",map, "keep-unmatched");
-    	assertEquals("FEEL THE BERN!, bernie",result1);
-    	assertEquals("feel the bern, bernie",result2);
-    }
-    
-    @Test
-    public void EntryMapSpec5Test3() // THIS ONE DOESNT PASSES BUT THAT IS DUE TO ANOTHER ERROR IN THE SPEC OF TEMPLATE ENGINE
-    {
-    	map.store("name", "Donald", false);
-    	map.store("name", "trump", false);
-    	String result1 = engine.evaluate("${name} Duck is so funny!",map,"keep-unmatched");
-    	String resutl2 = engine.evaluate("I still have a ${name} card up my sleeve!", map, "keep-unmatched");
-    	assertEquals("Donald Duck is so funny!",result1);
-    	assertEquals("I still have a trump card up my sleeve!",resutl2);
-    }
-    
-    @Test
-    public void EntryMapSpec5Test4() 
-    {
-    	map.store("firstName", "Hilary", false);
-    	map.store("firstname", "Hilary", false);
-    	int size = map.getEntries().size();
-    	assertEquals(2,size);
-    }
-    
-    @Test
-    public void TemplateEngineSpec5Test1()    {
-    	map.store("first name", "Jackie", false);
-    	String result = engine.evaluate("first name is ${firstname}",map, "keep-unmatched");
-    	assertEquals("first name is Jackie", result);
-    }
-    
-    @Test
-    public void TemplateEngineSpec5Test2() {
-    	map.store("first"+'\t'+"name", "Jackie", false);
-    	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
-    	assertEquals("first name is Jackie", result);	
-    }
-    
-    @Test
-    public void TemplateEngineSpec5Test3(){
-    	map.store("first"+'\n'+"name", "Jackie", false);
-    	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
-    	assertEquals("first name is Jackie", result);	
-    }
-    
-    @Test
-    public void TemplateEngineSpec5Test4()    {
-    	map.store("First Name", "Chan", true);
-    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
-    	assertEquals("first name is Chan", result);	
-    }
-    
-    @Test
-    public void TemplateEngineSpec5Test5() {
-    	map.store("First"+'\t'+"Name", "Chan", true);
-    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
-    	assertEquals("first name is Chan", result);	
-    }
-    
-    @Test
-    public void TemplateEngineSpec5Test6(){
-    	map.store("First"+'\n'+"Name", "Chan", true);
-    	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
-    	assertEquals("first name is Chan", result);	
-    }
-    
-    @Test
-    public void TemplateEngineSpec6Test1MoreOpenBraces(){
-    	map.store("date", "24th", false);
-    	map.store("month", "January", false);
-    	String result = engine.evaluate("Today's ${date is ${date} of ${month}", map, "keep-unmatched");
-    	assertEquals("Today's ${date is 24th of January",result);
-    }
-    
-    @Test
-    public void TemplateEngineSpec6Test2MoreClosedBraces(){
-    	map.store("date", "24th", false);
-    	map.store("month", "January", false);
-    	String result = engine.evaluate("Today's date is ${date} of ${month} }", map, "keep-unmatched");
-    	assertEquals("Today's date is 24th of January }",result);
-    }
-
-    @Test
-    public void TemplateEngineSpec6Test3ReverseOrder(){
-    	map.store("date", "24th", false);
-    	map.store("month", "January", false);
-    	String result = engine.evaluate("Today's date }is ${date} of ${month} ${", map, "keep-unmatched");
-    	assertEquals("Today's date }is 24th of January ${",result);
-    }
-    
-    @Test
-    public void TemplateEngineSpec6Test4ComplexString(){
-    	map.store("date", "10th", false);
-    	map.store("month", "January", false);
-    	map.store("10th of January", "Febuary",false);
-    	map.store("${ This is due 10th of Febuary }", "It Works", false);
-    	String result = engine.evaluate("${${ This is due ${date} of ${ ${date} of ${month} } }}}", map, "keep-unmatched");
-    	assertEquals("It Works}",result);
-    }
+    // Spec 8
     
     @Test
     public void TemplateEngineSpec8Test1ReplaceTemplate(){
