@@ -372,8 +372,35 @@ public class TemplateEngineTest {
     	map.store("date", "10th", false);
     	map.store("month", "January", false);
     	map.store("10th of January", "Febuary",false);
-    	String result = engine.evaluate("${ This is due ${date } of ${ ${date} of ${month} } }", map, "keep-unmatched");
-    	assertEquals("${ This is due 10th of Febuary }",result);
+    	map.store("${ This is due 10th of Febuary }", "It Works", false);
+    	String result = engine.evaluate("${${ This is due ${date} of ${ ${date} of ${month} } }}}", map, "keep-unmatched");
+    	assertEquals("It Works}",result);
+    }
     
+    @Test
+    public void TemplateEngineSpec8Test1ReplaceTemplate(){
+    	map.store("name", "James", false);
+    	String result = engine.evaluate("The name is ${name}.", map, "keep-unmatched");
+    	assertEquals("The name is James.", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec8Test2ReplaceMultipleTemplate(){
+    	map.store("fName", "James", false);
+    	map.store("lName", "Bond", false);
+    	String result = engine.evaluate("The name is ${fName}. ${fName} ${lName}", map, "keep-unmatched");
+    	assertEquals("The name is James. James Bond", result);	
+    }
+    
+    @Test
+    public void TemplateEngineSpec8Test3NoMatchKeepUnMatched(){
+    	String result = engine.evaluate("I would like a ${liqour} martini. Shaken, not ${mixing method}", map, "keep-unmatched");
+    	assertEquals("I would like a ${liqour} martini. Shaken, not ${mixing method}", result);	
+    } 
+    
+    @Test // WHY IS THIS ONE NOT WORKINGGG
+    public void TemplateEngineSpec8Test4NoMatchDeleteUnmatched(){
+    	String result = engine.evaluate("I ran out ${ of ideas}", map, "delete-unmatched");
+    	assertEquals("I ran out",result);
     }
 }
