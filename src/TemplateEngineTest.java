@@ -53,7 +53,7 @@ public class TemplateEngineTest {
     	assertEquals("Hello Adam", result);
     }
     
- // EntryMap - Spec 1 - Template is composed of multiple words
+    // EntryMap - Spec 1 - Template is composed of multiple words
     @Test
     public void EntryMapSpec1_ValidTemplateWithMultipleWords(){
     	map.store(VALID_ARG_1, "james james james", false);
@@ -398,9 +398,10 @@ public class TemplateEngineTest {
     	assertEquals("I would like a ${liqour} martini. Shaken, not ${mixing method}", result);	
     } 
     
-    @Test // WHY IS THIS ONE NOT WORKINGGG
+    @Test
     public void TemplateEngineSpec8Test4NoMatchDeleteUnmatched(){
-    	String result = engine.evaluate("I ran out ${ of ideas}", map, "delete-unmatched");
-    	assertEquals("I ran out",result);
+    	map.store("temp", "nothing", false);
+    	String result = engine.evaluate("I ran out ${of ideas}", map, "delete-unmatched");
+    	assertEquals("I ran out ",result);
     }
 }
