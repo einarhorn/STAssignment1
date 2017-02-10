@@ -31,23 +31,25 @@ public class TemplateEngineTest {
      *  EntryMap Tests
      */
     
-    // EntryMap Spec 1 - Template cannot be null or empty. Valid template should pass.
+    /**
+     *  EntryMap Spec 1 - Template cannot be null or empty. Valid template should pass.
+     */
     
-    // EntryMap - Spec 1 - Template is null
+    // Spec 1 - Template is null
     @Test(expected=RuntimeException.class)
     public void EntryMapSpec1_NullTemplate(){
     	map.store(null, VALID_ARG_2, false);
         	
     }
     
-    // EntryMap - Spec 1 - Template is empty string
+    // Spec 1 - Template is empty string
     @Test(expected=RuntimeException.class)
     public void EntryMapSpec1_EmptyTemplate(){
     	map.store("", VALID_ARG_2, false);
         	
     }
     
-    // EntryMap - Spec 1 - Template is valid
+    // Spec 1 - Template is valid
     @Test
     public void EntryMapSpec1_ValidTemplate(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -55,7 +57,7 @@ public class TemplateEngineTest {
     	assertEquals("Hello Adam", result);
     }
     
-    // EntryMap - Spec 1 - Template is composed of multiple words
+    // Spec 1 - Template is composed of multiple words
     @Test
     public void EntryMapSpec1_ValidTemplateWithMultipleWords(){
     	map.store(VALID_ARG_1, "james james james", false);
@@ -64,17 +66,18 @@ public class TemplateEngineTest {
     }
     
     
+    /**
+     *  EntryMap Spec 2 - Replace value cannot be null. Empty or valid should pass.
+     */
     
-    // EntryMap Spec 2 - Replace value cannot be null. Empty or valid should pass.
-    
-    // EntryMap - Spec 2 - Replace value is null
+    // Spec 2 - Replace value is null
     @Test(expected=RuntimeException.class)
     public void EntryMapSpec2_NullReplace(){
     	map.store(VALID_ARG_1, null, false);
         
     }
 
-    // EntryMap - Spec 2 - Replace value is empty
+    // Spec 2 - Replace value is empty
     @Test
     public void EntryMapSpec2_EmptyReplace(){
     	map.store(VALID_ARG_1, "", false);
@@ -82,7 +85,7 @@ public class TemplateEngineTest {
     	assertEquals("Hello ", result);
     }
     
-    // EntryMap - Spec 2 - Replace value is valid
+    // Spec 2 - Replace value is valid
     @Test
     public void EntryMapSpec2_ValidReplace(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -92,12 +95,14 @@ public class TemplateEngineTest {
     
 
     
+    /**
+     *  EntryMap Spec 3 - Case sensitive flag is optional and can be null
+     * 	In case of null, template matching is case insensitive
+     *  Check true, false, null
+     */
     
-    // EntryMap Spec 3 - Case sensitive flag is optional and can be null
-    // 			In case of null, template matching is case insensitive
-    // Check true, false, null
     
-    // Template matching case sensitive
+    // Spec 3 - Template matching case sensitive
     @Test
     public void EntryMapSpec3_TrueCaseSensitive(){
     	map.store("name", VALID_ARG_2, true);
@@ -106,7 +111,7 @@ public class TemplateEngineTest {
     	
     }
     
-    // Template matching case insensitive
+    // Spec 3 - Template matching case insensitive
     @Test
     public void EntryMapSpec3_FalseCaseSensitive(){
     	map.store("NAME", VALID_ARG_2, false);
@@ -115,7 +120,7 @@ public class TemplateEngineTest {
     	
     }
     
-    // Template matching should be case insensitive when null
+    // Spec 3 - Template matching should be case insensitive when null
     @Test
     public void EntryMapSpec3_NullCaseSensitive(){
     	map.store("NAME", VALID_ARG_2, null);
@@ -124,9 +129,13 @@ public class TemplateEngineTest {
     	
     }
 
+    /**
+     * EntryMap Spec 4 - Entry map should store template inputs in the order they were added
+     */
     
+    // Spec 4 - Templates stored in the map should be as they were inputed. 
     @Test
-    public void EntryMapSpec4Test1(){ 
+    public void EntryMapSpec4_AlphabeticalOrder(){ 
     	map.store("name", "Einar", true);
     	map.store("name", "Ritvik", false);
     	String result1 = engine.evaluate("Second name is ${NAME}", map, "keep-unmatched");
@@ -135,8 +144,9 @@ public class TemplateEngineTest {
     	assertEquals("First name is Einar", result2);
     }
     
+    // Spec 4 - Template order should remain in the input order and not default into a alphabetical order
     @Test
-    public void EntryMapSpec4Test2(){
+    public void EntryMapSpec4_ReverseAlphabeticalOrder(){
     	map.store("name", "Romeo", false);
     	map.store("name", "Juliet", false);
     	String result1 = engine.evaluate("First name is ${name}", map, "keep-unmatched");
@@ -145,10 +155,14 @@ public class TemplateEngineTest {
     
     
     
-    // Spec 5
+    /**
+     *  EntryMap Spec 5 - EntryMap should contain only unique entries. 
+     *  We assumed entries are unique if all 3 parameters are exactly identical
+     */
     
+    // Spec 5 - Map should contain only one copy of identical entries
     @Test
-    public void EntryMapSpec5Test1(){ 
+    public void EntryMapSpec5_RejectDuplivateEntries(){ 
 
     	map.store("name", "adam", false);
     	map.store("name", "adam", false);
@@ -157,8 +171,9 @@ public class TemplateEngineTest {
     	
     }
     
+    // Spec 5 - Map should contain both entries as they are unique entries due to the case sensitivity boolean
     @Test
-    public void EntryMapSpec5Test2() {
+    public void EntryMapSpec5_DifferentEntryByCaseSensitivity() {
     	map.store("name", "bernie", true);
     	map.store("name", "bernie", false);
     	String result1 = engine.evaluate("FEEL THE BERN!, ${NAME}", map, "keep-unmatched");
@@ -167,8 +182,9 @@ public class TemplateEngineTest {
     	assertEquals("feel the bern, bernie",result2);
     }
     
+    // Spec 5 - Map should contain both values evern thought the keys are identical. Different due to value and boolean
     @Test
-    public void EntryMapSpec5Test3() 
+    public void EntryMapSpec5_DifferentEntryByValueAndCaseSensitivity() 
     {
     	map.store("name", "Donald", true);
     	map.store("name", "trump", false);
@@ -178,8 +194,10 @@ public class TemplateEngineTest {
     	assertEquals("I still have a trump card up my sleeve!",resutl2);
     }
     
+    
+    // Spec 5 - Map should contain both entries as the entries are different due to different keys
     @Test
-    public void EntryMapSpec5Test4() 
+    public void EntryMapSpec5_DifferentEntryByKey() 
     {
     	map.store("firstName", "Hilary", false);
     	map.store("firstname", "Hilary", false);
@@ -196,9 +214,11 @@ public class TemplateEngineTest {
      * 
      */
     
-    // TemplateEngine - Spec 1 - Template can be null or empty. If null or empty, evaluate returns unchanged template string.
+    /**
+     *  TemplateEngine Spec 1 - Template can be null or empty. If null or empty, evaluate returns unchanged template string.
+     */
     
-    // TemplateEngine - Spec 1 - Template is null
+    // Spec 1 - Template is null
     @Test
     public void TemplateEngineSpec1_NullTemplate(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -207,7 +227,7 @@ public class TemplateEngineTest {
         	
     }
     
-    // TemplateEngine - Spec 1 - Template is empty string
+    // Spec 1 - Template is empty string
     @Test
     public void TemplateEngineSpec1_EmptyTemplate(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -216,7 +236,7 @@ public class TemplateEngineTest {
         	
     }
     
-    // TemplateEngine - Spec 1 - Template is valid
+    // Spec 1 - Template is valid
     @Test
     public void TemplateEngineSpec1_ValidTemplate(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -228,8 +248,11 @@ public class TemplateEngineTest {
     
     
     
-    // TemplateEngine - Spec 2 - EntryMap can be null. If EntryMap is null, unchanged template string can be returned
-    // TemplateEngine - Spec 2 - EntryMap is null
+    /**
+     *  TemplateEngine - Spec 2 - EntryMap can be null. If EntryMap is null, unchanged template string can be returned
+     */
+    
+    // Spec 2 - EntryMap is null
     @Test
     public void TemplateEngineSpec2_NullEntryMap(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -238,7 +261,7 @@ public class TemplateEngineTest {
         	
     }
     
-    // TemplateEngine - Spec 2 - EntryMap is valid
+    // Spec 2 - EntryMap is valid
     @Test
     public void TemplateEngineSpec2_ValidEntryMap(){
     	map.store(VALID_ARG_1, VALID_ARG_2, false);
@@ -250,8 +273,10 @@ public class TemplateEngineTest {
     
     
     
-    // TemplateEngine - Spec 3 - Matching mode - Null or other value defaults to "delete-unmatched"
-    // AMBIGUOUS SPECIFICATION - Spec says matching mode both allowed and not allowed to be null.
+    /**
+     *  TemplateEngine - Spec 3 - Matching mode - Null or other value defaults to "delete-unmatched"
+     *  AMBIGUOUS SPECIFICATION - Spec says matching mode both allowed and not allowed to be null.
+     */
     
     // Spec 3 - Matching mode is null. Should be equivalent to if matching mode was set to "delete-unmatched"
     @Test
@@ -269,7 +294,7 @@ public class TemplateEngineTest {
     	assertEquals("Hello ", result);
     }
     
-    //Spec 3 - Matching mode is valid string: "delete-unmatched"
+    // Spec 3 - Matching mode is valid string: "delete-unmatched"
     @Test
     public void TemplateEngineSpec3_DeleteUnmatchedMatchingMode(){
     	map.store("randomTemplate", VALID_ARG_2, false);
@@ -285,10 +310,9 @@ public class TemplateEngineTest {
     	assertEquals("Hello ${name}", result);
     }
     
-    
-    
-    
-    // TemplateEngine - Spec 4 - Everything between "${" and "}" are counted as templates
+    /**
+     *  TemplateEngine - Spec 4 - Everything between "${" and "}" are counted as templates
+     */
     
     // Spec 4 - Simple valid templates
     @Test
@@ -327,80 +351,93 @@ public class TemplateEngineTest {
     
     
     
-    // Spec 5
+    /**
+     *  TemmplateEngine Spec 5 - No visible characters should not affect the matching of templates
+     */
     
+    // Spec 5 - Matching should not be affected by space characters
     @Test
-    public void TemplateEngineSpec5Test1()    {
+    public void TemplateEngineSpec5_TemplateWithSpaceCaseInsensitive()    {
     	map.store("first name", "Jackie", false);
     	String result = engine.evaluate("first name is ${firstname}",map, "keep-unmatched");
     	assertEquals("first name is Jackie", result);
     }
     
+    // Spec 5 - Matching should not be affected by tab characters
     @Test
-    public void TemplateEngineSpec5Test2() {
+    public void TemplateEngineSpec5_TemplateWithTabCaseInsensitive() {
     	map.store("first"+'\t'+"name", "Jackie", false);
     	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
     	assertEquals("first name is Jackie", result);	
     }
     
+    // Spec 5 - Matching should not be affected by new line characters
     @Test
-    public void TemplateEngineSpec5Test3(){
+    public void TemplateEngineSpec5Test3_TemplateWithNewLineCaseInsensitive(){
     	map.store("first"+'\n'+"name", "Jackie", false);
     	String result = engine.evaluate("first name is ${firstname}", map, "keep-unmatched");
     	assertEquals("first name is Jackie", result);	
     }
     
+    // Spec 5 - Matching should not be affected by space characters when case sensitive
     @Test
-    public void TemplateEngineSpec5Test4()    {
+    public void TemplateEngineSpec5Test_TemplateWithSpaceCaseSensitve()    {
     	map.store("First Name", "Chan", true);
     	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
     	assertEquals("first name is Chan", result);	
     }
     
+    // Spec 5 - Matching should not be affected by tab characters when case sensitive
     @Test
-    public void TemplateEngineSpec5Test5() {
+    public void TemplateEngineSpec5_TemplateWithTabCaseSensitve() {
     	map.store("First"+'\t'+"Name", "Chan", true);
     	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
     	assertEquals("first name is Chan", result);	
     }
-    
+     
+    // Spec 5 - Matching should not be affected by tab characters when case sensitive
     @Test
-    public void TemplateEngineSpec5Test6(){
+    public void TemplateEngineSpec5_TemplateWithNewLineCaseSensitve(){
     	map.store("First"+'\n'+"Name", "Chan", true);
     	String result = engine.evaluate("first name is ${FirstName}", map, "keep-unmatched");
     	assertEquals("first name is Chan", result);	
     }
     
     
-    // Spec 6
+    /**
+     * Template Engine Spec 6 - The open and end braces for templates must properly match each other
+     */
     
-    
+    // Spec 6 - Input String contains more open braces than closed braces
     @Test
-    public void TemplateEngineSpec6Test1MoreOpenBraces(){
+    public void TemplateEngineSpec6_MoreOpenBraces(){
     	map.store("date", "24th", false);
     	map.store("month", "January", false);
     	String result = engine.evaluate("Today's ${date is ${date} of ${month}", map, "keep-unmatched");
     	assertEquals("Today's ${date is 24th of January",result);
     }
     
+    // Spec 6 - Input String contains more closed braces than open braces
     @Test
-    public void TemplateEngineSpec6Test2MoreClosedBraces(){
+    public void TemplateEngineSpec6_MoreClosedBraces(){
     	map.store("date", "24th", false);
     	map.store("month", "January", false);
     	String result = engine.evaluate("Today's date is ${date} of ${month} }", map, "keep-unmatched");
     	assertEquals("Today's date is 24th of January }",result);
     }
 
+    // Spec 6 - Input String contains one pair of braces in reverse order
     @Test
-    public void TemplateEngineSpec6Test3ReverseOrder(){
+    public void TemplateEngineSpec6_ReverseOrder(){
     	map.store("date", "24th", false);
     	map.store("month", "January", false);
     	String result = engine.evaluate("Today's date }is ${date} of ${month} ${", map, "keep-unmatched");
     	assertEquals("Today's date }is 24th of January ${",result);
     }
     
+    // Spec 6 - Input String contains many nested templates and has one extra close braces
     @Test
-    public void TemplateEngineSpec6Test4ComplexString(){
+    public void TemplateEngineSpec6Test_ComplexString(){
     	map.store("date", "10th", false);
     	map.store("month", "January", false);
     	map.store("10th of January", "Febuary",false);
@@ -410,7 +447,9 @@ public class TemplateEngineTest {
     }
     
     
-    // TemplateEngine - Spec 7 - Templates are ordered according the their length
+    /** 
+     * TemplateEngine Spec 7 - Templates are ordered according the their length
+     */
     
     // Spec 7 - Testing the ordering by length
     // Note the "keep-unmatched" setting used here
@@ -470,8 +509,13 @@ public class TemplateEngineTest {
     }
     
     
-    // Spec 8
+    /**
+     *  TemplateEngine Spec 8 - The template engine should appropriately replace templates if matches are found
+     *  If matches are not found, they should keep the templates if last parameter is "keep-unmatched" else 
+     *  it should delete templates from the string if the last template is "delete-unmatched" 
+     */
     
+    // Spec 8 - Template engine should correctly replace template in string when matched
     @Test
     public void TemplateEngineSpec8Test1ReplaceTemplate(){
     	map.store("name", "James", false);
@@ -479,6 +523,7 @@ public class TemplateEngineTest {
     	assertEquals("The name is James.", result);	
     }
     
+    // Spec 8 - Template engine should correctly replace ALL templates in string if multiple matches
     @Test
     public void TemplateEngineSpec8Test2ReplaceMultipleTemplate(){
     	map.store("fName", "James", false);
@@ -487,12 +532,14 @@ public class TemplateEngineTest {
     	assertEquals("The name is James. James Bond", result);	
     }
     
+    // Spec 8 - Template engine should correctly keep unmatched templates if last parameter is 'keep-unmatched'
     @Test
     public void TemplateEngineSpec8Test3NoMatchKeepUnMatched(){
     	String result = engine.evaluate("I would like a ${liqour} martini. Shaken, not ${mixing method}", map, "keep-unmatched");
     	assertEquals("I would like a ${liqour} martini. Shaken, not ${mixing method}", result);	
     } 
     
+    // Spec 8 - Template engine should correctly remove unmatched templates if last parameter is 'delete-unmatched"
     @Test
     public void TemplateEngineSpec8Test4NoMatchDeleteUnmatched(){
     	map.store("temp", "nothing", false);
