@@ -309,7 +309,7 @@ public class TemplateEngineTest {
     	String result1 = engine.evaluate("Second ${name} is ${NAME}", map, "keep-unmatched");
     	String result2 = engine.evaluate("Second ${NAME} is ${name}", map, "keep-unmatched");
     	
-
+    	
     	assertEquals("Second Einar is Ritvik", result1);
     	assertEquals("Second Ritvik is Einar", result2);
     }
