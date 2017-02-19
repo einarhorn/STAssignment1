@@ -548,11 +548,111 @@ public class Task1 {
     	assertEquals("I ran out ",result);
     }
     
+    
+    
     // Additional tests for coverage
     @Test
     public void TemplateEngineCoverageTestUnderSequanceFalse(){
     	map.store("patter", "value", false);
     	String result = engine.evaluate("{pattern}",map,"delete-unmatched");
     	assertEquals("{pattern}",result);
+    }
+    @Test
+    public void EntryMapCoverageTestEqualsSelfReferenceCheck(){
+
+    	map.store("test", "nothing", false);
+    	Boolean identicalElements = map.getEntries().get(0).equals(map.getEntries().get(0));
+    	
+    	String result = engine.evaluate("zzz ${test}", map, "delete-unmatched");
+    	assertEquals("zzz nothing",result);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsNullOrOtherClassCheck(){
+    	map.store("test", "nothing", false);
+
+    	// (T|F)
+    	Boolean identicalElements = map.getEntries().get(0).equals(null);
+
+    	
+    	// (F|T)
+    	Boolean testBoolean = false;
+    	Boolean identicalElements2 = map.getEntries().get(0).equals(testBoolean);
+    	
+    	String result = engine.evaluate("zzz ${test}", map, "delete-unmatched");
+    	assertEquals("zzz nothing",result);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsDifferentPattern(){
+    	map.store("test", "nothing", false);
+    	map.store("test2", "nothing2", false);
+    	
+    	map.getEntries().get(0).equals(map.getEntries().get(1));
+
+    	
+    	String result = engine.evaluate("zzz ${test}", map, "delete-unmatched");
+    	assertEquals("zzz nothing",result);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsDifferentValue(){
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing2", false);
+
+    	map.getEntries().get(0).equals(map.getEntries().get(1));
+    	
+    	String result = engine.evaluate("zzz ${test}", map, "delete-unmatched");
+    	assertEquals("zzz nothing",result);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestHashCodeNullCaseSensitivity(){
+    	
+    	
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing2", false);
+
+    	
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+    	
+    	testEntry.hashCode();
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsBothNullCaseSensitivity(){
+    	
+    	
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing", true);
+
+    	
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+    	
+    	EntryMap.Entry testEntry2 = map.getEntries().get(1);
+    	testEntry2.caseSensitive = null;
+    	
+    	testEntry2.equals(testEntry);
+    	
+    }
+    
+    
+    
+    @Test
+    public void EntryMapCoverageTestEqualsOneNullCaseSensitivity(){
+    	
+    	
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing", true);
+
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+	
+    	
+    	testEntry.equals(map.getEntries().get(1));
+    	
+
     }
 }
