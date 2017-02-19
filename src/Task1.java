@@ -7,8 +7,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import st.EntryMap;
-import st.TemplateEngine;
 
 public class Task1 {
 
@@ -124,6 +122,9 @@ public class Task1 {
     @Test
     public void EntryMapSpec3_NullCaseSensitive(){
     	map.store("NAME", VALID_ARG_2, null);
+    	map.store("NAME1", VALID_ARG_1, null);
+    	map.store("NAME2", VALID_ARG_2, null);
+    	map.store("NAME2", VALID_ARG_1, null);
     	String result = engine.evaluate("Hello ${name}", map,"delete-unmatched");
     	assertEquals("Hello Adam", result);
     	
@@ -545,5 +546,14 @@ public class Task1 {
     	map.store("temp", "nothing", false);
     	String result = engine.evaluate("I ran out ${of ideas}", map, "delete-unmatched");
     	assertEquals("I ran out ",result);
+    }
+    
+    // Additional tests for coverage
+    @Test
+    public void TemplateEngineCoverageTest1(){
+    	System.out.println("Test case");
+    	map.store("test", "nothing", false);
+    	String result = engine.evaluate("zzz ${test}", map, "delete-unmatched");
+    	assertEquals("nothinga",result);
     }
 }
