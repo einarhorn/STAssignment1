@@ -552,6 +552,12 @@ public class Task1 {
     
     // Additional tests for coverage
     @Test
+    public void TemplateEngineCoverageTestUnderSequanceFalse(){
+    	map.store("patter", "value", false);
+    	String result = engine.evaluate("{pattern}",map,"delete-unmatched");
+    	assertEquals("{pattern}",result);
+    }
+    @Test
     public void EntryMapCoverageTestEqualsSelfReferenceCheck(){
 
     	map.store("test", "nothing", false);
@@ -647,6 +653,7 @@ public class Task1 {
     	
     	testEntry.equals(map.getEntries().get(1));
     	
+
     }
     
     @Test

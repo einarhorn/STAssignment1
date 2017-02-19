@@ -74,7 +74,7 @@ public class EntryMap {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
+            if (this == o) return true; 
             if (o == null || getClass() != o.getClass()) return false;
 
             Entry entry = (Entry) o;
@@ -88,7 +88,7 @@ public class EntryMap {
         public int hashCode() {
             int result = getPattern().hashCode();
             result = 31 * result + getValue().hashCode();
-            result = 31 * result + (getCaseSensitive() != null ? getCaseSensitive().hashCode() : 0);
+            result = 31 * result + (getCaseSensitive() != null ? getCaseSensitive().hashCode() : 0); // Unreachable Branch due to line 16
             return result;
         }
     }
