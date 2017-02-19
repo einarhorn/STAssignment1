@@ -648,4 +648,27 @@ public class Task1 {
     	testEntry.equals(map.getEntries().get(1));
     	
     }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsOy(){
+    	
+    	// Should generate a string of length 2^31 - 1, but runs out of memory on my machine :( 
+    	StringBuilder s = new StringBuilder("s");
+    	for (int i = 0; i < 31; i++){
+    		if (i == 30){
+    			s.append(s.substring(0, s.length() - 1 - 1));
+    		} else {
+    			s.append(s.toString());
+    		}
+    		System.out.println(s.length());
+    		
+    	}
+    	
+    	map.store("NAME", "Ritvik", false);
+    	String result1 = engine.evaluate("Second ${" + s + "} is ${NAME}", map, "delete-unmatched");
+    	
+    	
+    	assertEquals("Second  is Ritvik", result1);
+    	
+    }
 }
