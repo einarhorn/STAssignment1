@@ -550,10 +550,9 @@ public class Task1 {
     
     // Additional tests for coverage
     @Test
-    public void TemplateEngineCoverageTest1(){
-    	System.out.println("Test case");
-    	map.store("test", "nothing", false);
-    	String result = engine.evaluate("zzz ${test}", map, "delete-unmatched");
-    	assertEquals("nothinga",result);
+    public void TemplateEngineCoverageTestUnderSequanceFalse(){
+    	map.store("patter", "value", false);
+    	String result = engine.evaluate("{pattern}",map,"delete-unmatched");
+    	assertEquals("{pattern}",result);
     }
 }
