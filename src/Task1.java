@@ -650,7 +650,7 @@ public class Task1 {
     }
     
     @Test
-    public void EntryMapCoverageTestEqualsOy(){
+    public void TemplateEngineCoverageTestIntMaxTemplateLength(){
     	
     	// Should generate a string of length 2^31 - 1, but runs out of memory on my machine :( 
     	StringBuilder s = new StringBuilder("s");
