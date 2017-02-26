@@ -642,17 +642,19 @@ public class Task1 {
     
     @Test
     public void EntryMapCoverageTestEqualsOneNullCaseSensitivity(){
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing", true);
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+    	testEntry.equals(map.getEntries().get(1));
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEmptyTemplate(){
     	
     	
     	map.store("test", "nothing", false);
-    	map.store("test", "nothing", true);
-
-    	EntryMap.Entry testEntry = map.getEntries().get(0);
-    	testEntry.caseSensitive = null;
-	
-    	
-    	testEntry.equals(map.getEntries().get(1));
-    	
-
+    	String result = engine.evaluate("${}", map, "delete-unmatched");
+    	assertEquals(result,"");
     }
 }
