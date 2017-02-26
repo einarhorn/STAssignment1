@@ -188,8 +188,8 @@ public class TemplateEngine {
         System.out.println(currentTemplate.content);
         System.out.println(currentTemplate.getEndIndex());
         System.out.println(instancedString);
+        System.out.println(instancedString.length());
         if (currentTemplate.getEndIndex() == instancedString.length()){
-        	
             secondHalf = "";
         }
         else{

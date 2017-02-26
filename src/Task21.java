@@ -1,4 +1,4 @@
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 
-public class Task1 {
+public class Task21 {
 
     private EntryMap map;
 
@@ -548,4 +548,130 @@ public class Task1 {
     	assertEquals("I ran out ",result);
     }
     
+    
+
+    /******* Additional tests for coverage *******/
+    
+    @Test
+    public void TemplateEngineCoverageTestUnderSequanceFalse(){
+    	map.store("patter", "value", false);
+    	String result = engine.evaluate("{pattern}",map,"delete-unmatched");
+    	assertEquals("{pattern}",result);
+    }
+    @Test
+    public void EntryMapCoverageTestEqualsSelfReferenceCheck(){
+
+    	map.store("test", "nothing", false);
+    	assertEquals(map.getEntries().get(0),map.getEntries().get(0));
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsNullOrOtherClassCheck(){
+    	map.store("test", "nothing", false);
+
+    	// (T|F)
+    	Boolean identicalElements = map.getEntries().get(0).equals(null);
+
+    	
+    	// (F|T)
+    	Boolean testBoolean = false;
+    	Boolean identicalElements2 = map.getEntries().get(0).equals(testBoolean);
+    	assertEquals(identicalElements2, false);
+    	assertEquals(identicalElements, false);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsDifferentPattern(){
+    	map.store("test", "nothing", false);
+    	map.store("test2", "nothing2", false);
+    	assertFalse(map.getEntries().get(0).equals(map.getEntries().get(1)));
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsDifferentValue(){
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing2", false);
+
+    	Boolean result = map.getEntries().get(0).equals(map.getEntries().get(1));
+    	assertEquals(false,result);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestHashCodeNullCaseSensitivity(){
+    	
+    	
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing2", false);
+
+    	
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+    	
+    	testEntry.hashCode();
+    	
+    	
+    	//TODO MUST ASSERT SOMEHOW
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEqualsBothNullCaseSensitivity(){
+    	
+    	
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing", true);
+
+    	
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+    	
+    	EntryMap.Entry testEntry2 = map.getEntries().get(1);
+    	testEntry2.caseSensitive = null;
+    	
+    	assertEquals(testEntry2,testEntry);
+    	
+    }
+    
+    
+    
+    @Test
+    public void EntryMapCoverageTestEqualsOneNullCaseSensitivity(){
+    	map.store("test", "nothing", false);
+    	map.store("test", "nothing", true);
+    	EntryMap.Entry testEntry = map.getEntries().get(0);
+    	testEntry.caseSensitive = null;
+    	Boolean result = testEntry.equals(map.getEntries().get(1));
+    	assertEquals(result, false);
+    }
+    
+    @Test
+    public void EntryMapCoverageTestEmptyTemplate(){  	
+    	map.store("test", "nothing", false);
+    	String result = engine.evaluate("${}", map, "delete-unmatched");
+    	assertEquals(result,"");
+    }
+    
+    
+    //This test attempts to achieve branch coverage on the FALSE branch in line 127 but fails
+    @Test
+    public void TemplateEngineCoverageTestIntMaxTemplateLength(){
+    	
+    	// Should generate a string of length 2^31 - 1, but runs out of memory on my machine :( 
+    	StringBuilder s = new StringBuilder("s");
+    	for (int i = 0; i < 31; i++){
+    		if (i == 30){
+    			s.append(s.substring(0, s.length() - 1 - 1));
+    		} else {
+    			s.append(s.toString());
+    		}
+    		System.out.println(s.length());
+    		
+    	}
+    	
+    	map.store("NAME", "Ritvik", false);
+    	String result1 = engine.evaluate("Second ${" + s + "} is ${NAME}", map, "delete-unmatched");
+    	
+    	
+    	assertEquals("Second  is Ritvik", result1);
+    	
+    }
 }
