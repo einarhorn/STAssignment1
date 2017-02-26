@@ -33,3 +33,5 @@ Template Engine
  	Final Branch Coverage : 67/94 branches covered ~ 71.3%.
  Entry Map
  
+ 	We were successfully able to cover all branches of this class.
+ 
