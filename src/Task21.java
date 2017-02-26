@@ -652,26 +652,26 @@ public class Task21 {
     
     
     //This test attempts to achieve branch coverage on the FALSE branch in line 127 but fails
-    @Test
-    public void TemplateEngineCoverageTestIntMaxTemplateLength(){
-    	
-    	// Should generate a string of length 2^31 - 1, but runs out of memory on my machine :( 
-    	StringBuilder s = new StringBuilder("s");
-    	for (int i = 0; i < 31; i++){
-    		if (i == 30){
-    			s.append(s.substring(0, s.length() - 1 - 1));
-    		} else {
-    			s.append(s.toString());
-    		}
-    		System.out.println(s.length());
-    		
-    	}
-    	
-    	map.store("NAME", "Ritvik", false);
-    	String result1 = engine.evaluate("Second ${" + s + "} is ${NAME}", map, "delete-unmatched");
-    	
-    	
-    	assertEquals("Second  is Ritvik", result1);
-    	
-    }
+//    @Test
+//    public void TemplateEngineCoverageTestIntMaxTemplateLength(){
+//    	
+//    	// Should generate a string of length 2^31 - 1, but runs out of memory on my machine :( 
+//    	StringBuilder s = new StringBuilder("s");
+//    	for (int i = 0; i < 31; i++){
+//    		if (i == 30){
+//    			s.append(s.substring(0, s.length() - 1 - 1));
+//    		} else {
+//    			s.append(s.toString());
+//    		}
+//    		System.out.println(s.length());
+//    		
+//    	}
+//    	
+//    	map.store("NAME", "Ritvik", false);
+//    	String result1 = engine.evaluate("Second ${" + s + "} is ${NAME}", map, "delete-unmatched");
+//    	
+//    	
+//    	assertEquals("Second  is Ritvik", result1);
+//    	
+//    }
 }
